@@ -1,17 +1,29 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { useEffect } from 'react';
+import { Redirect } from 'expo-router';
+
+import { hasOnboarded } from '@/db/preferences';
+
+import { useState } from 'react';
 
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
-    </View>
-  );
-}
+  const [loading, setLoading] = useState(true);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  const [completed, setCompleted] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      setCompleted(await hasOnboarded());
+      setLoading(false);
+    }
+
+    load();
+  }, []);
+
+  if (loading) return null;
+
+  if (!completed) {
+    return <Redirect href="/onboarding" />;
+  }
+
+  return <Redirect href="/(tabs)/home" />;
+}
