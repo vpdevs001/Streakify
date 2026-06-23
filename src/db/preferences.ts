@@ -6,8 +6,8 @@
 //  Import it as the default export (works exactly like AsyncStorage).
 // ─────────────────────────────────────────────────────────────────────────────
 
-import Storage from "expo-sqlite/kv-store";
-import { STORAGE_KEYS } from "./types";
+import Storage from 'expo-sqlite/kv-store';
+import { STORAGE_KEYS } from './types';
 
 // ─── Onboarding ──────────────────────────────────────────────────────────────
 
@@ -17,14 +17,14 @@ import { STORAGE_KEYS } from "./types";
  */
 export async function hasOnboarded(): Promise<boolean> {
   const value = await Storage.getItem(STORAGE_KEYS.HAS_ONBOARDED);
-  return value === "true";
+  return value === 'true';
 }
 
 /**
  * Mark onboarding as complete. Call this on the last onboarding screen.
  */
 export async function setOnboarded(): Promise<void> {
-  await Storage.setItem(STORAGE_KEYS.HAS_ONBOARDED, "true");
+  await Storage.setItem(STORAGE_KEYS.HAS_ONBOARDED, 'true');
 }
 
 /**
@@ -60,12 +60,12 @@ export async function clearActiveUserId(): Promise<void> {
 
 // ─── Theme ────────────────────────────────────────────────────────────────────
 
-export type AppTheme = "light" | "dark" | "system";
+export type AppTheme = 'light' | 'dark' | 'system';
 
 export async function getTheme(): Promise<AppTheme> {
   const value = await Storage.getItem(STORAGE_KEYS.THEME);
-  if (value === "light" || value === "dark" || value === "system") return value;
-  return "system"; // default
+  if (value === 'light' || value === 'dark' || value === 'system') return value;
+  return 'system'; // default
 }
 
 export async function setTheme(theme: AppTheme): Promise<void> {
@@ -74,17 +74,15 @@ export async function setTheme(theme: AppTheme): Promise<void> {
 
 // ─── Notification permission ──────────────────────────────────────────────────
 
-export type NotificationPermission = "granted" | "denied" | "undetermined";
+export type NotificationPermission = 'granted' | 'denied' | 'undetermined';
 
 export async function getNotificationPermission(): Promise<NotificationPermission> {
   const value = await Storage.getItem(STORAGE_KEYS.NOTIFICATION_PERMISSION);
-  if (value === "granted" || value === "denied") return value;
-  return "undetermined";
+  if (value === 'granted' || value === 'denied') return value;
+  return 'undetermined';
 }
 
-export async function setNotificationPermission(
-  status: NotificationPermission,
-): Promise<void> {
+export async function setNotificationPermission(status: NotificationPermission): Promise<void> {
   await Storage.setItem(STORAGE_KEYS.NOTIFICATION_PERMISSION, status);
 }
 

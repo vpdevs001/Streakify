@@ -3,7 +3,7 @@
 //  Uses expo-sqlite (SDK 55): SQLiteDatabase from 'expo-sqlite'
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { type SQLiteDatabase } from "expo-sqlite";
+import { type SQLiteDatabase } from 'expo-sqlite';
 
 // ─── DDL strings ─────────────────────────────────────────────────────────────
 
@@ -103,7 +103,7 @@ type MigrationFn = (db: SQLiteDatabase) => Promise<void>;
 
 const MIGRATIONS: { name: string; run: MigrationFn }[] = [
   {
-    name: "v1_initial_schema",
+    name: 'v1_initial_schema',
     run: async (db) => {
       await db.execAsync(`PRAGMA journal_mode = WAL;`);
       await db.execAsync(`PRAGMA foreign_keys = ON;`);
@@ -135,9 +135,7 @@ const MIGRATIONS: { name: string; run: MigrationFn }[] = [
  */
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   // PRAGMA user_version is a built-in integer we can use as a schema version
-  const result = await db.getFirstAsync<{ user_version: number }>(
-    "PRAGMA user_version",
-  );
+  const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
   const currentVersion = result?.user_version ?? 0;
   const pendingMigrations = MIGRATIONS.slice(currentVersion);
 

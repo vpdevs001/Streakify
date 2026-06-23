@@ -2,14 +2,14 @@
 //  db/historyMethods.ts  –  CRUD for `habit_history` + summary queries
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { type SQLiteDatabase } from "expo-sqlite";
+import { type SQLiteDatabase } from 'expo-sqlite';
 import {
   type HabitHistory,
   type CreateHistoryInput,
   type UpdateHistoryInput,
   type WeeklySummary,
   type MonthlySummary,
-} from "./types";
+} from './types';
 import {
   buildSetClause,
   type SQLiteBindValue,
@@ -18,7 +18,7 @@ import {
   weekEnd,
   toDateString,
   daysInMonth,
-} from "./utils";
+} from './utils';
 
 // ─── Create / Upsert ─────────────────────────────────────────────────────────
 
@@ -54,7 +54,7 @@ export async function upsertHabitHistory(
     `SELECT * FROM habit_history WHERE habit_id = ? AND date = ?`,
     [input.habit_id, input.date],
   );
-  if (!row) throw new Error("upsertHabitHistory: failed to retrieve row");
+  if (!row) throw new Error('upsertHabitHistory: failed to retrieve row');
   return row;
 }
 
@@ -70,7 +70,7 @@ export async function markHabitCompleted(
     habit_id: habitId,
     user_id: userId,
     date: todayDateString(),
-    status: "completed",
+    status: 'completed',
     completion_count: completionCount,
     note,
   });
@@ -79,14 +79,8 @@ export async function markHabitCompleted(
 // ─── Read ─────────────────────────────────────────────────────────────────────
 
 /** Fetch a single history record by its PK. */
-export async function getHistoryById(
-  db: SQLiteDatabase,
-  id: number,
-): Promise<HabitHistory | null> {
-  return db.getFirstAsync<HabitHistory>(
-    `SELECT * FROM habit_history WHERE id = ?`,
-    [id],
-  );
+export async function getHistoryById(db: SQLiteDatabase, id: number): Promise<HabitHistory | null> {
+  return db.getFirstAsync<HabitHistory>(`SELECT * FROM habit_history WHERE id = ?`, [id]);
 }
 
 /** Fetch the history record for a specific habit on a specific date. */
@@ -162,28 +156,19 @@ export async function updateHistory(
     return existing;
   }
 
-  const { clause, values } = buildSetClause(
-    input as Record<string, SQLiteBindValue | undefined>,
-  );
+  const { clause, values } = buildSetClause(input as Record<string, SQLiteBindValue | undefined>);
 
-  await db.runAsync(`UPDATE habit_history SET ${clause} WHERE id = ?`, [
-    ...values,
-    id,
-  ]);
+  await db.runAsync(`UPDATE habit_history SET ${clause} WHERE id = ?`, [...values, id]);
 
   const updated = await getHistoryById(db, id);
-  if (!updated)
-    throw new Error(`updateHistory: record ${id} not found after update`);
+  if (!updated) throw new Error(`updateHistory: record ${id} not found after update`);
   return updated;
 }
 
 // ─── Delete ───────────────────────────────────────────────────────────────────
 
 /** Delete a single history record. */
-export async function deleteHistoryById(
-  db: SQLiteDatabase,
-  id: number,
-): Promise<void> {
+export async function deleteHistoryById(db: SQLiteDatabase, id: number): Promise<void> {
   await db.runAsync(`DELETE FROM habit_history WHERE id = ?`, [id]);
 }
 
@@ -193,10 +178,7 @@ export async function deleteHistoryForDate(
   habitId: number,
   date: string,
 ): Promise<void> {
-  await db.runAsync(
-    `DELETE FROM habit_history WHERE habit_id = ? AND date = ?`,
-    [habitId, date],
-  );
+  await db.runAsync(`DELETE FROM habit_history WHERE habit_id = ? AND date = ?`, [habitId, date]);
 }
 
 // ─── Weekly summary ───────────────────────────────────────────────────────────
@@ -260,7 +242,7 @@ export async function getMonthlySummary(
   year: number,
   month: number,
 ): Promise<MonthlySummary[]> {
-  const paddedMonth = String(month).padStart(2, "0");
+  const paddedMonth = String(month).padStart(2, '0');
   const prefix = `${year}-${paddedMonth}`;
   const totalDays = daysInMonth(year, month);
 
@@ -299,10 +281,10 @@ export async function getHabitCalendarData(
   db: SQLiteDatabase,
   habitId: number,
   days = 90,
-): Promise<Record<string, HabitHistory["status"]>> {
+): Promise<Record<string, HabitHistory['status']>> {
   const rows = await db.getAllAsync<{
     date: string;
-    status: HabitHistory["status"];
+    status: HabitHistory['status'];
   }>(
     `SELECT date, status FROM habit_history
      WHERE habit_id = ?

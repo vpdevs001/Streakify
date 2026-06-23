@@ -12,8 +12,8 @@ export function todayDateString(): string {
 /** Converts a Date to YYYY-MM-DD (local time) */
 export function toDateString(date: Date): string {
   const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
 }
 
@@ -58,10 +58,7 @@ export function daysInMonth(year: number, month: number): number {
 /**
  * Safely parse a JSON string. Returns `fallback` on error.
  */
-export function safeJsonParse<T>(
-  json: string | null | undefined,
-  fallback: T,
-): T {
+export function safeJsonParse<T>(json: string | null | undefined, fallback: T): T {
   if (!json) return fallback;
   try {
     return JSON.parse(json) as T;
@@ -95,16 +92,16 @@ export type SQLiteBindValue = string | number | null | boolean | Uint8Array;
  * // clause  → 'name = ?, avatar_uri = ?'
  * // values  → ['Alice', null]
  */
-export function buildSetClause(
-  fields: Record<string, SQLiteBindValue | undefined>,
-): { clause: string; values: SQLiteBindValue[] } {
-  const entries = (
-    Object.entries(fields) as [string, SQLiteBindValue | undefined][]
-  ).filter(([, v]) => v !== undefined) as [string, SQLiteBindValue][];
+export function buildSetClause(fields: Record<string, SQLiteBindValue | undefined>): {
+  clause: string;
+  values: SQLiteBindValue[];
+} {
+  const entries = (Object.entries(fields) as [string, SQLiteBindValue | undefined][]).filter(
+    ([, v]) => v !== undefined,
+  ) as [string, SQLiteBindValue][];
 
-  if (entries.length === 0)
-    throw new Error("buildSetClause: no fields to update");
-  const clause = entries.map(([k]) => `${k} = ?`).join(", ");
+  if (entries.length === 0) throw new Error('buildSetClause: no fields to update');
+  const clause = entries.map(([k]) => `${k} = ?`).join(', ');
   const values: SQLiteBindValue[] = entries.map(([, v]) => v);
   return { clause, values };
 }
@@ -119,8 +116,7 @@ export function computeStreaks(completedDates: string[]): {
   currentStreak: number;
   longestStreak: number;
 } {
-  if (completedDates.length === 0)
-    return { currentStreak: 0, longestStreak: 0 };
+  if (completedDates.length === 0) return { currentStreak: 0, longestStreak: 0 };
 
   const today = todayDateString();
   const dateSet = new Set(completedDates);
@@ -133,9 +129,7 @@ export function computeStreaks(completedDates: string[]): {
   for (let i = 1; i < sorted.length; i++) {
     const prev = new Date(sorted[i - 1]);
     const curr = new Date(sorted[i]);
-    const diffDays = Math.round(
-      (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24),
-    );
+    const diffDays = Math.round((curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24));
     if (diffDays === 1) {
       runLength++;
       if (runLength > longestStreak) longestStreak = runLength;
@@ -166,12 +160,12 @@ export function parseReminderTime(
   time: string | null | undefined,
 ): { hour: number; minute: number } | null {
   if (!time) return null;
-  const [h, m] = time.split(":").map(Number);
+  const [h, m] = time.split(':').map(Number);
   if (isNaN(h) || isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59) return null;
   return { hour: h, minute: m };
 }
 
 /** Format { hour, minute } back to "HH:MM" */
 export function formatReminderTime(hour: number, minute: number): string {
-  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
 }

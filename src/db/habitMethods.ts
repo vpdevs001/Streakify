@@ -2,24 +2,21 @@
 //  db/habitMethods.ts  –  CRUD for the `habits` table
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { type SQLiteDatabase } from "expo-sqlite";
+import { type SQLiteDatabase } from 'expo-sqlite';
 import {
   type Habit,
   type CreateHabitInput,
   type UpdateHabitInput,
   type HabitWithStreak,
-} from "./types";
-import { buildSetClause, computeStreaks, type SQLiteBindValue } from "./utils";
+} from './types';
+import { buildSetClause, computeStreaks, type SQLiteBindValue } from './utils';
 
 // ─── Create ───────────────────────────────────────────────────────────────────
 
 /**
  * Insert a new habit. Returns the full created row.
  */
-export async function createHabit(
-  db: SQLiteDatabase,
-  input: CreateHabitInput,
-): Promise<Habit> {
+export async function createHabit(db: SQLiteDatabase, input: CreateHabitInput): Promise<Habit> {
   const result = await db.runAsync(
     `INSERT INTO habits
        (user_id, title, description, icon, color,
@@ -35,35 +32,28 @@ export async function createHabit(
       input.frequency_type,
       input.frequency_days,
       input.target_count,
-      input.reminder_status ?? "disabled",
+      input.reminder_status ?? 'disabled',
       input.reminder_time ?? null,
       input.notification_id ?? null,
     ],
   );
 
-  const habit = await db.getFirstAsync<Habit>(
-    `SELECT * FROM habits WHERE id = ?`,
-    [result.lastInsertRowId],
-  );
-  if (!habit) throw new Error("createHabit: failed to retrieve inserted row");
+  const habit = await db.getFirstAsync<Habit>(`SELECT * FROM habits WHERE id = ?`, [
+    result.lastInsertRowId,
+  ]);
+  if (!habit) throw new Error('createHabit: failed to retrieve inserted row');
   return habit;
 }
 
 // ─── Read ─────────────────────────────────────────────────────────────────────
 
 /** Fetch a single habit by ID. Returns null if not found. */
-export async function getHabitById(
-  db: SQLiteDatabase,
-  id: number,
-): Promise<Habit | null> {
+export async function getHabitById(db: SQLiteDatabase, id: number): Promise<Habit | null> {
   return db.getFirstAsync<Habit>(`SELECT * FROM habits WHERE id = ?`, [id]);
 }
 
 /** Fetch all active (non-archived) habits for a user. */
-export async function getActiveHabits(
-  db: SQLiteDatabase,
-  userId: number,
-): Promise<Habit[]> {
+export async function getActiveHabits(db: SQLiteDatabase, userId: number): Promise<Habit[]> {
   return db.getAllAsync<Habit>(
     `SELECT * FROM habits
      WHERE user_id = ? AND is_archived = 0
@@ -73,10 +63,7 @@ export async function getActiveHabits(
 }
 
 /** Fetch archived habits for a user. */
-export async function getArchivedHabits(
-  db: SQLiteDatabase,
-  userId: number,
-): Promise<Habit[]> {
+export async function getArchivedHabits(db: SQLiteDatabase, userId: number): Promise<Habit[]> {
   return db.getAllAsync<Habit>(
     `SELECT * FROM habits
      WHERE user_id = ? AND is_archived = 1
@@ -127,10 +114,7 @@ export async function getHabitsWithStreaks(
 }
 
 /** Fetch habits that have an enabled reminder (used by notification scheduler). */
-export async function getHabitsWithReminders(
-  db: SQLiteDatabase,
-  userId: number,
-): Promise<Habit[]> {
+export async function getHabitsWithReminders(db: SQLiteDatabase, userId: number): Promise<Habit[]> {
   return db.getAllAsync<Habit>(
     `SELECT * FROM habits
      WHERE user_id = ? AND is_archived = 0 AND reminder_status = 'enabled'`,
@@ -154,34 +138,22 @@ export async function updateHabit(
     return existing;
   }
 
-  const { clause, values } = buildSetClause(
-    input as Record<string, SQLiteBindValue | undefined>,
-  );
+  const { clause, values } = buildSetClause(input as Record<string, SQLiteBindValue | undefined>);
 
-  await db.runAsync(`UPDATE habits SET ${clause} WHERE id = ?`, [
-    ...values,
-    id,
-  ]);
+  await db.runAsync(`UPDATE habits SET ${clause} WHERE id = ?`, [...values, id]);
 
   const updated = await getHabitById(db, id);
-  if (!updated)
-    throw new Error(`updateHabit: habit ${id} not found after update`);
+  if (!updated) throw new Error(`updateHabit: habit ${id} not found after update`);
   return updated;
 }
 
 /** Convenience wrapper to archive a habit (soft delete). */
-export async function archiveHabit(
-  db: SQLiteDatabase,
-  id: number,
-): Promise<Habit> {
+export async function archiveHabit(db: SQLiteDatabase, id: number): Promise<Habit> {
   return updateHabit(db, id, { is_archived: 1 });
 }
 
 /** Restore a previously archived habit. */
-export async function unarchiveHabit(
-  db: SQLiteDatabase,
-  id: number,
-): Promise<Habit> {
+export async function unarchiveHabit(db: SQLiteDatabase, id: number): Promise<Habit> {
   return updateHabit(db, id, { is_archived: 0 });
 }
 
@@ -202,9 +174,6 @@ export async function setHabitNotificationId(
 /**
  * Permanently delete a habit and all its history (via CASCADE).
  */
-export async function deleteHabit(
-  db: SQLiteDatabase,
-  id: number,
-): Promise<void> {
+export async function deleteHabit(db: SQLiteDatabase, id: number): Promise<void> {
   await db.runAsync(`DELETE FROM habits WHERE id = ?`, [id]);
 }

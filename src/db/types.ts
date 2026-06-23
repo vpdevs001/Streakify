@@ -12,14 +12,13 @@ export interface User {
   updated_at: string;
 }
 
-export type CreateUserInput = Pick<User, "name"> &
-  Partial<Pick<User, "avatar_uri">>;
-export type UpdateUserInput = Partial<Pick<User, "name" | "avatar_uri">>;
+export type CreateUserInput = Pick<User, 'name'> & Partial<Pick<User, 'avatar_uri'>>;
+export type UpdateUserInput = Partial<Pick<User, 'name' | 'avatar_uri'>>;
 
 // ── Habit ────────────────────────────────────
 
-export type FrequencyType = "daily" | "weekly" | "custom";
-export type ReminderStatus = "enabled" | "disabled";
+export type FrequencyType = 'daily' | 'weekly' | 'custom';
+export type ReminderStatus = 'enabled' | 'disabled';
 
 export interface Habit {
   id: number;
@@ -45,40 +44,35 @@ export interface Habit {
 
 export type CreateHabitInput = Pick<
   Habit,
-  "title" | "frequency_type" | "frequency_days" | "target_count"
+  'title' | 'frequency_type' | 'frequency_days' | 'target_count'
 > &
   Partial<
     Pick<
       Habit,
-      | "description"
-      | "icon"
-      | "color"
-      | "reminder_status"
-      | "reminder_time"
-      | "notification_id"
+      'description' | 'icon' | 'color' | 'reminder_status' | 'reminder_time' | 'notification_id'
     >
   > & { user_id: number };
 
 export type UpdateHabitInput = Partial<
   Pick<
     Habit,
-    | "title"
-    | "description"
-    | "icon"
-    | "color"
-    | "frequency_type"
-    | "frequency_days"
-    | "target_count"
-    | "reminder_status"
-    | "reminder_time"
-    | "notification_id"
-    | "is_archived"
+    | 'title'
+    | 'description'
+    | 'icon'
+    | 'color'
+    | 'frequency_type'
+    | 'frequency_days'
+    | 'target_count'
+    | 'reminder_status'
+    | 'reminder_time'
+    | 'notification_id'
+    | 'is_archived'
   >
 >;
 
 // ── History ──────────────────────────────────
 
-export type CompletionStatus = "completed" | "skipped" | "partial";
+export type CompletionStatus = 'completed' | 'skipped' | 'partial';
 
 export interface HabitHistory {
   id: number;
@@ -94,14 +88,11 @@ export interface HabitHistory {
   updated_at: string;
 }
 
-export type CreateHistoryInput = Pick<
-  HabitHistory,
-  "habit_id" | "user_id" | "date" | "status"
-> &
-  Partial<Pick<HabitHistory, "completion_count" | "note">>;
+export type CreateHistoryInput = Pick<HabitHistory, 'habit_id' | 'user_id' | 'date' | 'status'> &
+  Partial<Pick<HabitHistory, 'completion_count' | 'note'>>;
 
 export type UpdateHistoryInput = Partial<
-  Pick<HabitHistory, "status" | "completion_count" | "note">
+  Pick<HabitHistory, 'status' | 'completion_count' | 'note'>
 >;
 
 // ── Aggregates (for UI) ───────────────────────
@@ -133,8 +124,8 @@ export interface MonthlySummary {
 // ── AsyncStorage keys (re-exported for convenience) ──
 
 export const STORAGE_KEYS = {
-  HAS_ONBOARDED: "@habit_tracker/has_onboarded",
-  ACTIVE_USER_ID: "@habit_tracker/active_user_id",
-  THEME: "@habit_tracker/theme",
-  NOTIFICATION_PERMISSION: "@habit_tracker/notification_permission",
+  HAS_ONBOARDED: '@habit_tracker/has_onboarded',
+  ACTIVE_USER_ID: '@habit_tracker/active_user_id',
+  THEME: '@habit_tracker/theme',
+  NOTIFICATION_PERMISSION: '@habit_tracker/notification_permission',
 } as const;

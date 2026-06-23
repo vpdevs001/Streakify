@@ -6,22 +6,16 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Schema / migration
-export { migrateDatabase } from "./schema";
+export { migrateDatabase } from './schema';
 
 // Types & constants
-export * from "./types";
+export * from './types';
 
 // Utilities
-export * from "./utils";
+export * from './utils';
 
 // User CRUD
-export {
-  createUser,
-  getUserById,
-  getAllUsers,
-  updateUser,
-  deleteUser,
-} from "./userMethods";
+export { createUser, getUserById, getAllUsers, updateUser, deleteUser } from './userMethods';
 
 // Habit CRUD
 export {
@@ -36,7 +30,7 @@ export {
   unarchiveHabit,
   setHabitNotificationId,
   deleteHabit,
-} from "./habitMethods";
+} from './habitMethods';
 
 // History CRUD + summaries
 export {
@@ -53,7 +47,7 @@ export {
   getWeeklySummary,
   getMonthlySummary,
   getHabitCalendarData,
-} from "./historyMethods";
+} from './historyMethods';
 
 // Preferences (AsyncStorage)
 export {
@@ -70,4 +64,4 @@ export {
   getPreference,
   setPreference,
   removePreference,
-} from "./preferences";
+} from './preferences';

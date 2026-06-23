@@ -2,28 +2,24 @@
 //  db/userMethods.ts  –  CRUD for the `users` table
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { type SQLiteDatabase } from "expo-sqlite";
-import { type User, type CreateUserInput, type UpdateUserInput } from "./types";
-import { buildSetClause, type SQLiteBindValue } from "./utils";
+import { type SQLiteDatabase } from 'expo-sqlite';
+import { type User, type CreateUserInput, type UpdateUserInput } from './types';
+import { buildSetClause, type SQLiteBindValue } from './utils';
 
 // ─── Create ───────────────────────────────────────────────────────────────────
 
 /**
  * Insert a new user and return the created row.
  */
-export async function createUser(
-  db: SQLiteDatabase,
-  input: CreateUserInput,
-): Promise<User> {
-  const result = await db.runAsync(
-    `INSERT INTO users (name, avatar_uri) VALUES (?, ?)`,
-    [input.name, input.avatar_uri ?? null],
-  );
+export async function createUser(db: SQLiteDatabase, input: CreateUserInput): Promise<User> {
+  const result = await db.runAsync(`INSERT INTO users (name, avatar_uri) VALUES (?, ?)`, [
+    input.name,
+    input.avatar_uri ?? null,
+  ]);
 
-  const user = await db.getFirstAsync<User>(
-    `SELECT * FROM users WHERE id = ?`,
-    [result.lastInsertRowId],
-  );
+  const user = await db.getFirstAsync<User>(`SELECT * FROM users WHERE id = ?`, [
+    result.lastInsertRowId,
+  ]);
 
   if (!user) throw new Error(`createUser: failed to retrieve inserted row`);
   return user;
@@ -32,10 +28,7 @@ export async function createUser(
 // ─── Read ─────────────────────────────────────────────────────────────────────
 
 /** Fetch a single user by ID. Returns null if not found. */
-export async function getUserById(
-  db: SQLiteDatabase,
-  id: number,
-): Promise<User | null> {
+export async function getUserById(db: SQLiteDatabase, id: number): Promise<User | null> {
   return db.getFirstAsync<User>(`SELECT * FROM users WHERE id = ?`, [id]);
 }
 
@@ -61,15 +54,12 @@ export async function updateUser(
     return existing;
   }
 
-  const { clause, values } = buildSetClause(
-    input as Record<string, SQLiteBindValue | undefined>,
-  );
+  const { clause, values } = buildSetClause(input as Record<string, SQLiteBindValue | undefined>);
 
   await db.runAsync(`UPDATE users SET ${clause} WHERE id = ?`, [...values, id]);
 
   const updated = await getUserById(db, id);
-  if (!updated)
-    throw new Error(`updateUser: user ${id} not found after update`);
+  if (!updated) throw new Error(`updateUser: user ${id} not found after update`);
   return updated;
 }
 
@@ -78,9 +68,6 @@ export async function updateUser(
 /**
  * Delete a user and (via CASCADE) all their habits + history.
  */
-export async function deleteUser(
-  db: SQLiteDatabase,
-  id: number,
-): Promise<void> {
+export async function deleteUser(db: SQLiteDatabase, id: number): Promise<void> {
   await db.runAsync(`DELETE FROM users WHERE id = ?`, [id]);
 }
