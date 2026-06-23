@@ -1,0 +1,44 @@
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useColorScheme } from 'react-native';
+import { getTheme, setTheme, type AppTheme } from '../db/preferences';
+import { Colors, type ColorScheme, type ThemeColors } from '../theme';
+
+interface ThemeContextValue {
+  scheme: ColorScheme;
+  colors: ThemeColors;
+  preference: AppTheme;
+  setPreference: (p: AppTheme) => Promise<void>;
+}
+
+const ThemeContext = createContext<ThemeContextValue | null>(null);
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const systemScheme = (useColorScheme() ?? 'dark') as ColorScheme;
+  const [preference, setPreferenceState] = useState<AppTheme>('system');
+
+  useEffect(() => {
+    getTheme().then(setPreferenceState);
+  }, []);
+
+  const scheme: ColorScheme = preference === 'system' ? systemScheme : preference;
+  const colors = Colors[scheme];
+
+  const handleSetPreference = async (p: AppTheme) => {
+    setPreferenceState(p);
+    await setTheme(p);
+  };
+
+  return (
+    <ThemeContext.Provider
+      value={{ scheme, colors, preference, setPreference: handleSetPreference }}
+    >
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export function useTheme() {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) throw new Error('useTheme must be used within ThemeProvider');
+  return ctx;
+}

@@ -1,29 +1,14 @@
-import { useEffect } from 'react';
-import { Redirect } from 'expo-router';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { hasOnboarded } from '@/db/preferences';
+const index = () => {
+  return (
+    <View>
+      <Text>index</Text>
+    </View>
+  );
+};
 
-import { useState } from 'react';
+export default index;
 
-export default function Index() {
-  const [loading, setLoading] = useState(true);
-
-  const [completed, setCompleted] = useState(false);
-
-  useEffect(() => {
-    async function load() {
-      setCompleted(await hasOnboarded());
-      setLoading(false);
-    }
-
-    load();
-  }, []);
-
-  if (loading) return null;
-
-  if (!completed) {
-    return <Redirect href="/onboarding" />;
-  }
-
-  return <Redirect href="/(tabs)/home" />;
-}
+const styles = StyleSheet.create({});
