@@ -7,7 +7,7 @@ import {
   type Habit,
   type CreateHabitInput,
   type UpdateHabitInput,
-  type HabitWithStreak,
+  type HabitWithStreak
 } from './types';
 import { buildSetClause, computeStreaks, type SQLiteBindValue } from './utils';
 
@@ -34,12 +34,12 @@ export async function createHabit(db: SQLiteDatabase, input: CreateHabitInput): 
       input.target_count,
       input.reminder_status ?? 'disabled',
       input.reminder_time ?? null,
-      input.notification_id ?? null,
-    ],
+      input.notification_id ?? null
+    ]
   );
 
   const habit = await db.getFirstAsync<Habit>(`SELECT * FROM habits WHERE id = ?`, [
-    result.lastInsertRowId,
+    result.lastInsertRowId
   ]);
   if (!habit) throw new Error('createHabit: failed to retrieve inserted row');
   return habit;
@@ -58,7 +58,7 @@ export async function getActiveHabits(db: SQLiteDatabase, userId: number): Promi
     `SELECT * FROM habits
      WHERE user_id = ? AND is_archived = 0
      ORDER BY created_at ASC`,
-    [userId],
+    [userId]
   );
 }
 
@@ -68,7 +68,7 @@ export async function getArchivedHabits(db: SQLiteDatabase, userId: number): Pro
     `SELECT * FROM habits
      WHERE user_id = ? AND is_archived = 1
      ORDER BY updated_at DESC`,
-    [userId],
+    [userId]
   );
 }
 
@@ -78,7 +78,7 @@ export async function getArchivedHabits(db: SQLiteDatabase, userId: number): Pro
  */
 export async function getHabitsWithStreaks(
   db: SQLiteDatabase,
-  userId: number,
+  userId: number
 ): Promise<HabitWithStreak[]> {
   const habits = await getActiveHabits(db, userId);
 
@@ -90,7 +90,7 @@ export async function getHabitsWithStreaks(
       `SELECT date FROM habit_history
        WHERE habit_id = ? AND status = 'completed'
        ORDER BY date ASC`,
-      [habit.id],
+      [habit.id]
     );
 
     const dates = rows.map((r) => r.date);
@@ -99,14 +99,14 @@ export async function getHabitsWithStreaks(
     const countRow = await db.getFirstAsync<{ total: number }>(
       `SELECT COUNT(*) AS total FROM habit_history
        WHERE habit_id = ? AND status = 'completed'`,
-      [habit.id],
+      [habit.id]
     );
 
     enriched.push({
       ...habit,
       current_streak: currentStreak,
       longest_streak: longestStreak,
-      total_completions: countRow?.total ?? 0,
+      total_completions: countRow?.total ?? 0
     });
   }
 
@@ -118,7 +118,7 @@ export async function getHabitsWithReminders(db: SQLiteDatabase, userId: number)
   return db.getAllAsync<Habit>(
     `SELECT * FROM habits
      WHERE user_id = ? AND is_archived = 0 AND reminder_status = 'enabled'`,
-    [userId],
+    [userId]
   );
 }
 
@@ -130,7 +130,7 @@ export async function getHabitsWithReminders(db: SQLiteDatabase, userId: number)
 export async function updateHabit(
   db: SQLiteDatabase,
   id: number,
-  input: UpdateHabitInput,
+  input: UpdateHabitInput
 ): Promise<Habit> {
   if (Object.keys(input).length === 0) {
     const existing = await getHabitById(db, id);
@@ -161,11 +161,11 @@ export async function unarchiveHabit(db: SQLiteDatabase, id: number): Promise<Ha
 export async function setHabitNotificationId(
   db: SQLiteDatabase,
   habitId: number,
-  notificationId: string | null,
+  notificationId: string | null
 ): Promise<void> {
   await db.runAsync(`UPDATE habits SET notification_id = ? WHERE id = ?`, [
     notificationId,
-    habitId,
+    habitId
   ]);
 }
 

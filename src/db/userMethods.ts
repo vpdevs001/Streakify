@@ -14,11 +14,11 @@ import { buildSetClause, type SQLiteBindValue } from './utils';
 export async function createUser(db: SQLiteDatabase, input: CreateUserInput): Promise<User> {
   const result = await db.runAsync(`INSERT INTO users (name, avatar_uri) VALUES (?, ?)`, [
     input.name,
-    input.avatar_uri ?? null,
+    input.avatar_uri ?? null
   ]);
 
   const user = await db.getFirstAsync<User>(`SELECT * FROM users WHERE id = ?`, [
-    result.lastInsertRowId,
+    result.lastInsertRowId
   ]);
 
   if (!user) throw new Error(`createUser: failed to retrieve inserted row`);
@@ -46,7 +46,7 @@ export async function getAllUsers(db: SQLiteDatabase): Promise<User[]> {
 export async function updateUser(
   db: SQLiteDatabase,
   id: number,
-  input: UpdateUserInput,
+  input: UpdateUserInput
 ): Promise<User> {
   if (Object.keys(input).length === 0) {
     const existing = await getUserById(db, id);

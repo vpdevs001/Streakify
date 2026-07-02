@@ -9,7 +9,7 @@ import {
   createUser,
   getActiveHabits,
   setActiveUserId,
-  getAllUsers,
+  getAllUsers
 } from '../db';
 import type { HabitWithStreak, HabitHistory } from '../db/types';
 import { todayString } from '../utils/dateHelpers';
@@ -52,7 +52,7 @@ export function useHabits() {
         h.map(async (habit) => {
           const hist = await getHistoryForDate(db, habit.id, today);
           if (hist) histMap[habit.id] = hist;
-        }),
+        })
       );
       setTodayHistory(histMap);
     } finally {
@@ -85,12 +85,12 @@ export function useHabits() {
       const updated = await getHabitsWithStreaks(db, userId);
       setHabits(updated);
     },
-    [db, userId, todayHistory],
+    [db, userId, todayHistory]
   );
 
   const isCompleted = useCallback(
     (habitId: number) => todayHistory[habitId]?.status === 'completed',
-    [todayHistory],
+    [todayHistory]
   );
 
   const completedCount = Object.values(todayHistory).filter((h) => h.status === 'completed').length;
@@ -104,6 +104,6 @@ export function useHabits() {
     toggleHabit,
     isCompleted,
     completedCount,
-    completionRate,
+    completionRate
   };
 }

@@ -25,7 +25,7 @@ function AppGate() {
           flex: 1,
           backgroundColor: colors.background,
           justifyContent: 'center',
-          alignItems: 'center',
+          alignItems: 'center'
         }}
       >
         <ActivityIndicator color={colors.primary} />

@@ -29,7 +29,7 @@ export {
   archiveHabit,
   unarchiveHabit,
   setHabitNotificationId,
-  deleteHabit,
+  deleteHabit
 } from './habitMethods';
 
 // History CRUD + summaries
@@ -46,7 +46,7 @@ export {
   deleteHistoryForDate,
   getWeeklySummary,
   getMonthlySummary,
-  getHabitCalendarData,
+  getHabitCalendarData
 } from './historyMethods';
 
 // Preferences (AsyncStorage)
@@ -63,5 +63,5 @@ export {
   setNotificationPermission,
   getPreference,
   setPreference,
-  removePreference,
+  removePreference
 } from './preferences';

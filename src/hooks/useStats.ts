@@ -29,7 +29,7 @@ export function useStats() {
             const hist = await getAllHabitsHistoryForDate(db, uid, date);
             const count = hist.filter((h) => h.status === 'completed').length;
             return { date, count, total };
-          }),
+          })
         );
       };
 

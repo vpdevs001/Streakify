@@ -5,7 +5,7 @@
 export function computeChaiScore(
   currentStreak: number,
   completionRate: number, // 0–1
-  activeHabits: number,
+  activeHabits: number
 ): number {
   const raw = currentStreak * 2 + completionRate * 50 + activeHabits * 2;
   return Math.min(100, Math.max(0, Math.round(raw)));

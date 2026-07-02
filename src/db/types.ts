@@ -127,5 +127,5 @@ export const STORAGE_KEYS = {
   HAS_ONBOARDED: '@habit_tracker/has_onboarded',
   ACTIVE_USER_ID: '@habit_tracker/active_user_id',
   THEME: '@habit_tracker/theme',
-  NOTIFICATION_PERMISSION: '@habit_tracker/notification_permission',
+  NOTIFICATION_PERMISSION: '@habit_tracker/notification_permission'
 } as const;

@@ -6,7 +6,7 @@ export const SPACING = {
   lg: 20,
   xl: 24,
   '2xl': 32,
-  '3xl': 48,
+  '3xl': 48
 } as const;
 
 export const RADII = {
@@ -15,7 +15,7 @@ export const RADII = {
   lg: 14,
   xl: 18,
   '2xl': 24,
-  full: 999,
+  full: 999
 } as const;
 
 export const TYPOGRAPHY = {
@@ -31,5 +31,28 @@ export const TYPOGRAPHY = {
   medium: '500' as const,
   semibold: '600' as const,
   bold: '700' as const,
-  heavy: '800' as const,
+  heavy: '800' as const
 } as const;
+
+export const SLIDES = [
+  {
+    emoji: '🌱',
+    title: 'Build Tiny Habits\nThat Actually Stick',
+    subtitle: 'Consistency beats motivation.\nSmall steps, big changes.',
+    bg: '#FF8A3D'
+  },
+  {
+    emoji: '🔥',
+    title: 'Track Your Streaks',
+    subtitle: "Watch your streak grow every day.\nDon't break the chain.",
+    bg: '#EF4444',
+    streakDemo: true
+  },
+  {
+    emoji: '☕',
+    title: 'One Cup At A Time',
+    subtitle: 'Build habits one chai at a time.\nReady to start?',
+    bg: '#F59E0B',
+    isFinal: true
+  }
+];

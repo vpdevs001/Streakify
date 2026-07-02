@@ -112,8 +112,8 @@ const MIGRATIONS: { name: string; run: MigrationFn }[] = [
       await db.execAsync(CREATE_HABIT_HISTORY_TABLE);
       await db.execAsync(CREATE_INDEXES);
       await db.execAsync(CREATE_TRIGGERS);
-    },
-  },
+    }
+  }
   // Future migrations go here, e.g.:
   // {
   //   name: 'v2_add_habit_tags',
@@ -134,7 +134,9 @@ const MIGRATIONS: { name: string; run: MigrationFn }[] = [
  * </SQLiteProvider>
  */
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
-  // PRAGMA user_version is a built-in integer we can use as a schema version
+  // ✅ Set WAL mode once, standalone, before any transaction
+  await db.execAsync('PRAGMA journal_mode = WAL;');
+
   const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
   const currentVersion = result?.user_version ?? 0;
   const pendingMigrations = MIGRATIONS.slice(currentVersion);
@@ -149,7 +151,6 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
       await migration.run(txn as unknown as SQLiteDatabase);
     });
 
-    // Bump the version after each successful migration
     await db.execAsync(`PRAGMA user_version = ${nextVersion};`);
     console.log(`[DB] Applied migration: ${migration.name} → v${nextVersion}`);
   }

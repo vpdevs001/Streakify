@@ -97,7 +97,7 @@ export function buildSetClause(fields: Record<string, SQLiteBindValue | undefine
   values: SQLiteBindValue[];
 } {
   const entries = (Object.entries(fields) as [string, SQLiteBindValue | undefined][]).filter(
-    ([, v]) => v !== undefined,
+    ([, v]) => v !== undefined
   ) as [string, SQLiteBindValue][];
 
   if (entries.length === 0) throw new Error('buildSetClause: no fields to update');
@@ -157,7 +157,7 @@ export function computeStreaks(completedDates: string[]): {
  * Returns null for invalid / missing values.
  */
 export function parseReminderTime(
-  time: string | null | undefined,
+  time: string | null | undefined
 ): { hour: number; minute: number } | null {
   if (!time) return null;
   const [h, m] = time.split(':').map(Number);

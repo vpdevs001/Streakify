@@ -20,7 +20,7 @@ export const Colors = {
     tabBar: '#0D0D0D',
     tabBarBorder: '#1F1F1F',
     inputBg: '#1F1F1F',
-    skeleton: '#262626',
+    skeleton: '#262626'
   },
   light: {
     background: '#FAFAF8',
@@ -41,8 +41,8 @@ export const Colors = {
     tabBar: '#FFFFFF',
     tabBarBorder: '#E5E5E5',
     inputBg: '#F5F5F5',
-    skeleton: '#E5E5E5',
-  },
+    skeleton: '#E5E5E5'
+  }
 } as const;
 
 export type ColorScheme = 'dark' | 'light';
@@ -62,7 +62,7 @@ export const HABIT_COLORS = [
   '#F97316', // deep orange
   '#10B981', // emerald
   '#06B6D4', // cyan
-  '#A855F7', // purple
+  '#A855F7' // purple
 ];
 
 // ─── preset icons ────────────────────────────────────────────────────────────
@@ -107,5 +107,5 @@ export const PRESET_ICONS = [
   '🏅',
   '🎖️',
   '🔥',
-  '⚡',
+  '⚡'
 ];

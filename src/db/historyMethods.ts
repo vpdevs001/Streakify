@@ -8,7 +8,7 @@ import {
   type CreateHistoryInput,
   type UpdateHistoryInput,
   type WeeklySummary,
-  type MonthlySummary,
+  type MonthlySummary
 } from './types';
 import {
   buildSetClause,
@@ -17,7 +17,7 @@ import {
   weekStart,
   weekEnd,
   toDateString,
-  daysInMonth,
+  daysInMonth
 } from './utils';
 
 // ─── Create / Upsert ─────────────────────────────────────────────────────────
@@ -29,7 +29,7 @@ import {
  */
 export async function upsertHabitHistory(
   db: SQLiteDatabase,
-  input: CreateHistoryInput,
+  input: CreateHistoryInput
 ): Promise<HabitHistory> {
   await db.runAsync(
     `INSERT INTO habit_history
@@ -46,13 +46,13 @@ export async function upsertHabitHistory(
       input.date,
       input.status,
       input.completion_count ?? 1,
-      input.note ?? null,
-    ],
+      input.note ?? null
+    ]
   );
 
   const row = await db.getFirstAsync<HabitHistory>(
     `SELECT * FROM habit_history WHERE habit_id = ? AND date = ?`,
-    [input.habit_id, input.date],
+    [input.habit_id, input.date]
   );
   if (!row) throw new Error('upsertHabitHistory: failed to retrieve row');
   return row;
@@ -64,7 +64,7 @@ export async function markHabitCompleted(
   habitId: number,
   userId: number,
   completionCount = 1,
-  note?: string,
+  note?: string
 ): Promise<HabitHistory> {
   return upsertHabitHistory(db, {
     habit_id: habitId,
@@ -72,7 +72,7 @@ export async function markHabitCompleted(
     date: todayDateString(),
     status: 'completed',
     completion_count: completionCount,
-    note,
+    note
   });
 }
 
@@ -87,11 +87,11 @@ export async function getHistoryById(db: SQLiteDatabase, id: number): Promise<Ha
 export async function getHistoryForDate(
   db: SQLiteDatabase,
   habitId: number,
-  date: string,
+  date: string
 ): Promise<HabitHistory | null> {
   return db.getFirstAsync<HabitHistory>(
     `SELECT * FROM habit_history WHERE habit_id = ? AND date = ?`,
-    [habitId, date],
+    [habitId, date]
   );
 }
 
@@ -100,13 +100,13 @@ export async function getHistoryRange(
   db: SQLiteDatabase,
   habitId: number,
   fromDate: string,
-  toDate: string,
+  toDate: string
 ): Promise<HabitHistory[]> {
   return db.getAllAsync<HabitHistory>(
     `SELECT * FROM habit_history
      WHERE habit_id = ? AND date BETWEEN ? AND ?
      ORDER BY date ASC`,
-    [habitId, fromDate, toDate],
+    [habitId, fromDate, toDate]
   );
 }
 
@@ -117,11 +117,11 @@ export async function getHistoryRange(
 export async function getAllHabitsHistoryForDate(
   db: SQLiteDatabase,
   userId: number,
-  date: string,
+  date: string
 ): Promise<HabitHistory[]> {
   return db.getAllAsync<HabitHistory>(
     `SELECT * FROM habit_history WHERE user_id = ? AND date = ?`,
-    [userId, date],
+    [userId, date]
   );
 }
 
@@ -129,14 +129,14 @@ export async function getAllHabitsHistoryForDate(
 export async function getRecentHistory(
   db: SQLiteDatabase,
   habitId: number,
-  limit = 30,
+  limit = 30
 ): Promise<HabitHistory[]> {
   return db.getAllAsync<HabitHistory>(
     `SELECT * FROM habit_history
      WHERE habit_id = ?
      ORDER BY date DESC
      LIMIT ?`,
-    [habitId, limit],
+    [habitId, limit]
   );
 }
 
@@ -148,7 +148,7 @@ export async function getRecentHistory(
 export async function updateHistory(
   db: SQLiteDatabase,
   id: number,
-  input: UpdateHistoryInput,
+  input: UpdateHistoryInput
 ): Promise<HabitHistory> {
   if (Object.keys(input).length === 0) {
     const existing = await getHistoryById(db, id);
@@ -176,7 +176,7 @@ export async function deleteHistoryById(db: SQLiteDatabase, id: number): Promise
 export async function deleteHistoryForDate(
   db: SQLiteDatabase,
   habitId: number,
-  date: string,
+  date: string
 ): Promise<void> {
   await db.runAsync(`DELETE FROM habit_history WHERE habit_id = ? AND date = ?`, [habitId, date]);
 }
@@ -192,7 +192,7 @@ export async function deleteHistoryForDate(
 export async function getWeeklySummary(
   db: SQLiteDatabase,
   userId: number,
-  weekOf: Date = new Date(),
+  weekOf: Date = new Date()
 ): Promise<WeeklySummary[]> {
   const start = weekStart(weekOf);
   const end = weekEnd(weekOf);
@@ -215,7 +215,7 @@ export async function getWeeklySummary(
        ON hh.habit_id = h.id AND hh.date BETWEEN ? AND ?
      WHERE h.user_id = ? AND h.is_archived = 0
      GROUP BY h.id`,
-    [startStr, endStr, userId],
+    [startStr, endStr, userId]
   );
 
   return rows.map((r) => ({
@@ -224,7 +224,7 @@ export async function getWeeklySummary(
     habit_id: r.habit_id,
     completed_days: r.completed_days,
     target_days: r.target_days,
-    completion_rate: r.target_days > 0 ? r.completed_days / r.target_days : 0,
+    completion_rate: r.target_days > 0 ? r.completed_days / r.target_days : 0
   }));
 }
 
@@ -240,7 +240,7 @@ export async function getMonthlySummary(
   db: SQLiteDatabase,
   userId: number,
   year: number,
-  month: number,
+  month: number
 ): Promise<MonthlySummary[]> {
   const paddedMonth = String(month).padStart(2, '0');
   const prefix = `${year}-${paddedMonth}`;
@@ -258,7 +258,7 @@ export async function getMonthlySummary(
        ON hh.habit_id = h.id AND hh.date LIKE ? || '-%'
      WHERE h.user_id = ? AND h.is_archived = 0
      GROUP BY h.id`,
-    [prefix, userId],
+    [prefix, userId]
   );
 
   return rows.map((r) => ({
@@ -267,7 +267,7 @@ export async function getMonthlySummary(
     habit_id: r.habit_id,
     completed_days: r.completed_days,
     total_days_in_month: totalDays,
-    completion_rate: r.completed_days / totalDays,
+    completion_rate: r.completed_days / totalDays
   }));
 }
 
@@ -280,7 +280,7 @@ export async function getMonthlySummary(
 export async function getHabitCalendarData(
   db: SQLiteDatabase,
   habitId: number,
-  days = 90,
+  days = 90
 ): Promise<Record<string, HabitHistory['status']>> {
   const rows = await db.getAllAsync<{
     date: string;
@@ -290,7 +290,7 @@ export async function getHabitCalendarData(
      WHERE habit_id = ?
        AND date >= date('now', ?)
      ORDER BY date ASC`,
-    [habitId, `-${days} days`],
+    [habitId, `-${days} days`]
   );
 
   return Object.fromEntries(rows.map((r) => [r.date, r.status]));
